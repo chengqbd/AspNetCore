@@ -37,13 +37,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
-  <!-- Include an assembly attribute into the built application assembly to indicate which flavor of the UI framework to use -->
-  <ItemGroup>
-    <AssemblyAttribute Include="Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute">
-      <_Parameter1>$(IdentityUIFrameworkVersion)</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
   <PropertyGroup>
     <ResolveStaticWebAssetsInputsDependsOn>_SetBootstrapFrameworkVersion</ResolveStaticWebAssetsInputsDependsOn>
   </PropertyGroup>
@@ -55,5 +48,5 @@
       </_StaticWebAssetsProjectReference>
     </ItemGroup>
   </Target>
-
+  
 </Project>

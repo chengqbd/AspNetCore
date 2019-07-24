@@ -137,12 +137,14 @@ namespace Templates.Test
             // The output from publish will go into bin/Release/netcoreapp3.0/publish and won't be affected by calling build
             // later, while the opposite is not true.
 
-            var buildResult = await Project.RunDotNetBuildAsync(packageOptions: packageOptions);
-            Assert.True(0 == buildResult.ExitCode, ErrorMessages.GetFailedProcessMessage("build", Project, buildResult));
-
+            // Migrations will run build and override the results from our test
             var migrationsResult = await Project.RunDotNetEfCreateMigrationAsync("razorpages");
             Assert.True(0 == migrationsResult.ExitCode, ErrorMessages.GetFailedProcessMessage("run EF migrations", Project, migrationsResult));
             Project.AssertEmptyMigration("razorpages");
+
+            var buildResult = await Project.RunDotNetBuildAsync(packageOptions: packageOptions);
+            Assert.True(0 == buildResult.ExitCode, ErrorMessages.GetFailedProcessMessage("build", Project, buildResult));
+
 
             using (var aspNetProcess = Project.StartBuiltProjectAsync())
             {

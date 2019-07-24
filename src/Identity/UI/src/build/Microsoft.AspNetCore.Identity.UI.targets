@@ -1,0 +1,58 @@
+<Project>
+  <Target Name="_ResolveIdentityUIVersion" AfterTargets="ResolveReferences">
+
+    <ItemGroup>
+      <_IdentityUIReferencePathV4 Include="@(ReferencePath)" Condition="'%(ReferencePath.PathInPackage)' == 'lib/netcoreapp3.0/Microsoft.AspNetCore.Identity.UI.Views.V4.dll'" />
+      <_IdentityUIReferencePathV3 Include="@(ReferencePath)" Condition="'%(ReferencePath.PathInPackage)' == 'lib/netcoreapp3.0/Microsoft.AspNetCore.Identity.UI.Views.V3.dll'" />
+      <_IdentityUIReferenceCopyLocalPathsV4 Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.PathInPackage)' == 'lib/netcoreapp3.0/Microsoft.AspNetCore.Identity.UI.Views.V4.dll'">
+        <DestinationSubPath>Microsoft.AspNetCore.Identity.UI.Views.dll</DestinationSubPath>
+      </_IdentityUIReferenceCopyLocalPathsV4>
+      <_IdentityUIReferenceCopyLocalPathsV3 Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.PathInPackage)' == 'lib/netcoreapp3.0/Microsoft.AspNetCore.Identity.UI.Views.V3.dll'">
+        <DestinationSubPath>Microsoft.AspNetCore.Identity.UI.Views.dll</DestinationSubPath>
+      </_IdentityUIReferenceCopyLocalPathsV3>
+
+      <!-- We take care of copying the reference, so remove it from the list of assemblies to copy -->
+      <ReferenceCopyLocalPaths Remove="@(_IdentityUIReferenceCopyLocalPathsV4)" />
+      <ReferenceCopyLocalPaths Remove="@(_IdentityUIReferenceCopyLocalPathsV3)" />
+    </ItemGroup>
+
+    <!-- Bootstrap 4 selected, so remove the reference to the V3 Views dll and mark the V4 element to be copied -->
+    <ItemGroup Condition="'$(IdentityUIFrameworkVersion)' == 'Bootstrap4'">
+      <ReferencePath Remove="@(_IdentityUIReferencePathV3)" />
+      <_IdentityUIReferenceCopyLocalPaths Include="@(_IdentityUIReferenceCopyLocalPathsV4)" />
+    </ItemGroup>
+
+    <!-- Bootstrap 3 selected, so remove the reference to the V4 Views dll and mark the V4 element to be copied -->
+    <ItemGroup Condition="'$(IdentityUIFrameworkVersion)' == 'Bootstrap3'">
+      <ReferencePath Remove="@(_IdentityUIReferencePathV4)" />
+      <_IdentityUIReferenceCopyLocalPaths Include="@(_IdentityUIReferenceCopyLocalPathsV3)" />
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="_CopyIdentityUIViewsAssembly" BeforeTargets="PrepareForRun">
+    <PropertyGroup>
+      <!-- By default we're not using Hard Links to copy to the output directory, and never when building in VS -->
+      <_IdentityUICreateHardLinksForCopyLocalIfPossible Condition="'$(BuildingInsideVisualStudio)' == 'true' or '$(CreateHardLinksForCopyLocalIfPossible)' == ''">false</_IdentityUICreateHardLinksForCopyLocalIfPossible>
+      <_IdentityUICreateSymbolicLinksForCopyLocalIfPossible Condition="'$(BuildingInsideVisualStudio)' == 'true' or '$(CreateSymbolicLinksForCopyLocalIfPossible)' == ''">false</_IdentityUICreateSymbolicLinksForCopyLocalIfPossible>
+    </PropertyGroup>
+
+    <Copy
+        SourceFiles="@(_IdentityUIReferenceCopyLocalPaths)"
+        DestinationFiles="@(_IdentityUIReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(DestinationSubPath)')"
+        SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+        Retries="$(CopyRetryCount)"
+        RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+        UseHardlinksIfPossible="$(_IdentityUICreateHardLinksForCopyLocalIfPossible)"
+        UseSymboliclinksIfPossible="$(_IdentityUICreateSymbolicLinksForCopyLocalIfPossible)"
+        Condition="'$(UseCommonOutputDirectory)' != 'true'"
+            >
+
+      <Output TaskParameter="DestinationFiles" ItemName="FileWritesShareable"/>
+      <Output TaskParameter="CopiedFiles" ItemName="ReferencesCopiedInThisBuild"/>
+
+    </Copy>
+  </Target>
+
+  </Project>
