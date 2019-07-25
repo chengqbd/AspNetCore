@@ -1812,7 +1812,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             public void Attach(RenderHandle renderHandle) { }
 
-            public Task SetParametersAsync(ParameterCollection parameters)
+            public Task SetParametersAsync(ParameterView parameters)
                 => throw new NotImplementedException();
         }
 

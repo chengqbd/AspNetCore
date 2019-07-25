@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Components.Test.Helpers;
 using Xunit;
 
-namespace Microsoft.AspNetCore.Components.Test
+namespace Microsoft.AspNetCore.Components
 {
-    public class ParameterCollectionAssignmentExtensionsTest
+    public partial class ParameterViewTest
     {
         [Fact]
         public void IncomingParameterMatchesAnnotatedPrivateProperty_SetsValue()
@@ -457,7 +457,7 @@ namespace Microsoft.AspNetCore.Components.Test
             public IEnumerator GetEnumerator()
                 => throw new NotImplementedException();
 
-            public ParameterCollection Build()
+            public ParameterView Build()
             {
                 var builder = new RenderTreeBuilder(new TestRenderer());
                 builder.OpenComponent<FakeComponent>(0);
@@ -466,17 +466,8 @@ namespace Microsoft.AspNetCore.Components.Test
                     builder.AddAttribute(1, kvp.Name, kvp.Value);
                 }
                 builder.CloseComponent();
-                return new ParameterCollection(builder.GetFrames().Array, ownerIndex: 0);
+                return new ParameterView(builder.GetFrames().Array, ownerIndex: 0);
             }
-        }
-
-        class FakeComponent : IComponent
-        {
-            public void Attach(RenderHandle renderHandle)
-                => throw new NotImplementedException();
-
-            public Task SetParametersAsync(ParameterCollection parameters)
-                => throw new NotImplementedException();
         }
     }
 }

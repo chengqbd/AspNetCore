@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Components.Test.Helpers
             component.SetParametersAsync(DictionaryToParameterCollection(parameters));
         }
 
-        private static ParameterCollection DictionaryToParameterCollection(
+        private static ParameterView DictionaryToParameterCollection(
             IDictionary<string, object> parameters)
         {
             var builder = new RenderTreeBuilder(new TestRenderer());
@@ -28,13 +28,13 @@ namespace Microsoft.AspNetCore.Components.Test.Helpers
             }
             builder.CloseElement();
 
-            return new ParameterCollection(builder.GetFrames().Array, 0);
+            return new ParameterView(builder.GetFrames().Array, 0);
         }
 
         private abstract class AbstractComponent : IComponent
         {
             public abstract void Attach(RenderHandle renderHandle);
-            public abstract Task SetParametersAsync(ParameterCollection parameters);
+            public abstract Task SetParametersAsync(ParameterView parameters);
         }
     }
 }

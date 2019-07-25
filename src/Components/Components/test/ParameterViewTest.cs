@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Xunit;
 
-namespace Microsoft.AspNetCore.Components.Test
+namespace Microsoft.AspNetCore.Components
 {
-    public class ParameterCollectionTest
+    public partial class ParameterViewTest
     {
         [Fact]
         public void CanInitializeUsingComponentWithNoDescendants()
@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Components.Test
             {
                 RenderTreeFrame.ChildComponent(0, typeof(FakeComponent)).WithComponentSubtreeLength(1)
             };
-            var parameterCollection = new ParameterCollection(frames, 0);
+            var parameterCollection = new ParameterView(frames, 0);
 
             // Assert
             Assert.Empty(ToEnumerable(parameterCollection));
@@ -34,7 +34,7 @@ namespace Microsoft.AspNetCore.Components.Test
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(1)
             };
-            var parameterCollection = new ParameterCollection(frames, 0);
+            var parameterCollection = new ParameterView(frames, 0);
 
             // Assert
             Assert.Empty(ToEnumerable(parameterCollection));
@@ -56,7 +56,7 @@ namespace Microsoft.AspNetCore.Components.Test
                 // end of the owner's descendants
                 RenderTreeFrame.Attribute(3, "orphaned attribute", "value")
             };
-            var parameterCollection = new ParameterCollection(frames, 0);
+            var parameterCollection = new ParameterView(frames, 0);
 
             // Assert
             Assert.Collection(ToEnumerable(parameterCollection),
@@ -78,7 +78,7 @@ namespace Microsoft.AspNetCore.Components.Test
                 RenderTreeFrame.Element(3, "child element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(4, "child attribute", "some value")
             };
-            var parameterCollection = new ParameterCollection(frames, 0);
+            var parameterCollection = new ParameterView(frames, 0);
 
             // Assert
             Assert.Collection(ToEnumerable(parameterCollection),
@@ -93,7 +93,7 @@ namespace Microsoft.AspNetCore.Components.Test
             var attribute1Value = new object();
             var attribute2Value = new object();
             var attribute3Value = new object();
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "attribute 1", attribute1Value)
@@ -114,7 +114,7 @@ namespace Microsoft.AspNetCore.Components.Test
         public void CanTryGetNonExistingValue()
         {
             // Arrange
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "some other entry", new object())
@@ -132,7 +132,7 @@ namespace Microsoft.AspNetCore.Components.Test
         public void CanTryGetExistingValueWithCorrectType()
         {
             // Arrange
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "my entry", "hello")
@@ -151,7 +151,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             // Arrange
             var myEntryValue = new object();
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "my entry", myEntryValue),
@@ -170,7 +170,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             // Arrange
             var myEntryValue = new object();
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(3),
                 RenderTreeFrame.Attribute(1, "my entry", myEntryValue),
@@ -188,7 +188,7 @@ namespace Microsoft.AspNetCore.Components.Test
         public void CanGetValueOrDefault_WithNonExistingValue()
         {
             // Arrange
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "some other entry", new object())
@@ -209,7 +209,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             // Arrange
             var explicitDefaultValue = new DateTime(2018, 3, 20);
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "some other entry", new object())
@@ -226,7 +226,7 @@ namespace Microsoft.AspNetCore.Components.Test
         public void ThrowsIfTryGetExistingValueWithIncorrectType()
         {
             // Arrange
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "my entry", "hello")
@@ -246,7 +246,7 @@ namespace Microsoft.AspNetCore.Components.Test
             var dictionary = new Dictionary<string, object>();
 
             // Act
-            var collection = ParameterCollection.FromDictionary(dictionary);
+            var collection = ParameterView.FromDictionary(dictionary);
 
             // Assert
             Assert.Empty(collection.ToDictionary());
@@ -263,7 +263,7 @@ namespace Microsoft.AspNetCore.Components.Test
             };
 
             // Act
-            var collection = ParameterCollection.FromDictionary(dictionary);
+            var collection = ParameterView.FromDictionary(dictionary);
 
             // Assert
             Assert.Equal(dictionary, collection.ToDictionary());
@@ -275,7 +275,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             // Arrange
             var entry2Value = new object();
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(3),
                 RenderTreeFrame.Attribute(0, "entry 1", "value 1"),
@@ -304,7 +304,7 @@ namespace Microsoft.AspNetCore.Components.Test
         {
             // Arrange
             var myEntryValue = new object();
-            var parameterCollection = new ParameterCollection(new[]
+            var parameterCollection = new ParameterView(new[]
             {
                 RenderTreeFrame.Element(0, "some element").WithElementSubtreeLength(2),
                 RenderTreeFrame.Attribute(1, "unrelated value", new object())
@@ -322,7 +322,7 @@ namespace Microsoft.AspNetCore.Components.Test
             Assert.Same(myEntryValue, result);
         }
 
-        private Action<Parameter> AssertParameter(string expectedName, object expectedValue, bool expectedIsCascading)
+        private Action<ParameterValue> AssertParameter(string expectedName, object expectedValue, bool expectedIsCascading)
         {
             return parameter =>
             {
@@ -332,7 +332,7 @@ namespace Microsoft.AspNetCore.Components.Test
             };
         }
 
-        public IEnumerable<Parameter> ToEnumerable(ParameterCollection parameterCollection)
+        public IEnumerable<ParameterValue> ToEnumerable(ParameterView parameterCollection)
         {
             foreach (var item in parameterCollection)
             {
@@ -345,7 +345,7 @@ namespace Microsoft.AspNetCore.Components.Test
             public void Attach(RenderHandle renderHandle)
                 => throw new NotImplementedException();
 
-            public Task SetParametersAsync(ParameterCollection parameters)
+            public Task SetParametersAsync(ParameterView parameters)
                 => throw new NotImplementedException();
         }
 
